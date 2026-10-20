@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Table with Search & Sort</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Data Table</h2>
+    
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="Search by name, age, or city...">
+      <div class="btn-group">
+        <button id="sortNameBtn">Sort by Name</button>
+        <button id="sortAgeBtn">Sort by Age</button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>City</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Array of objects
+    let data = [
+      { name: "Ahmed Hassan", age: 22, city: "Cairo" },
+      { name: "Mona Ali", age: 19, city: "Alexandria" },
+      { name: "Omar Mahmoud", age: 25, city: "Giza" },
+      { name: "Sara Ibrahim", age: 21, city: "Mansoura" },
+      { name: "Youssef Nabil", age: 20, city: "Luxor" }
+    ];
+
+    let currentData = [...data];
+    let sortNameAsc = true;
+    let sortAgeAsc = true;
+
+    const tableBody = document.getElementById('tableBody');
+    const searchInput = document.getElementById('searchInput');
+
+    function renderTable(items) {
+      tableBody.innerHTML = '';
+      if (items.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No records found</td></tr>';
+        return;
+      }
+      items.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = 
+          <td>${item.name}</td>
+          <td>${item.age}</td>
+          <td>${item.city}</td>
+        ;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Live search filter
+    searchInput.addEventListener('input', function() {
+      const term = this.value.toLowerCase().trim();
+      currentData = data.filter(item => 
+        item.name.toLowerCase().includes(term) ||
+        item.age.toString().includes(term) ||
+        item.city.toLowerCase().includes(term)
+      );
+      renderTable(currentData);
+    });
+
+    // Sort by name
+    document.getElementById('sortNameBtn').addEventListener('click', () => {
+      currentData.sort((a, b) => sortNameAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+      sortNameAsc = !sortNameAsc;
+      renderTable(currentData);
+    });
+
+    // Sort by age
+    document.getElementById('sortAgeBtn').addEventListener('click', () => {
+      currentData.sort((a, b) => sortAgeAsc ? a.age - b.age : b.age - a.age);
+      sortAgeAsc = !sortAgeAsc;
+      renderTable(currentData);
+    });
+
+    // Initial render
+    renderTable(currentData);
+  </script>
+</body>
+</html>
